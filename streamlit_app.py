@@ -90,6 +90,17 @@ edited_df = st.data_editor(
     disabled=["ID", "Date Submitted"],
 )
 
+# スライダーを使って年齢の範囲を選択
+date_min, date_max = st.slider(
+    'Date filter',
+    min_value=edited_df['Date Submitted'].min(),
+    max_value=edited_df['Date Submitted'].max(),
+    value=(edited_df['Date Submitted'].min(), edited_df['Date Submitted'].max())
+)
+
+# 選択された範囲でデータフレームをフィルター
+filtered_df = edited_df[(edited_df['Date Submitted'] >= date_min) & (edited_df['Date Submitted'] <= date_max)]
+
 # データフレームをCSV形式に変換
 csv = edited_df.to_csv(index=False).encode('utf-8')
 
