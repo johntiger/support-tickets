@@ -131,6 +131,17 @@ edited_df = st.data_editor(
     disabled=["ID", "Date Submitted"],
 )
 
+# データフレームをCSV形式に変換
+csv = edited_df.to_csv(index=False).encode('utf-8')
+
+# ダウンロードボタンの作成
+st.download_button(
+    label="テーブルをダウンロード",
+    data=csv,
+    file_name='table.csv',
+    mime='text/csv'
+)
+
 # Show some metrics and charts about the ticket.
 st.header("Statistics")
 
