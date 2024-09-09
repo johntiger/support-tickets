@@ -64,45 +64,25 @@ if "df" not in st.session_state:
 
 # Show section to view and edit existing tickets in a table.
 st.header("Table")
-st.write(f"Number of data: `{len(st.session_state.df)}`")
-
-# Show the tickets dataframe with `st.data_editor`. This lets the user edit the table
-# cells. The edited data is returned as a new dataframe.
-edited_df = st.data_editor(
-    st.session_state.df,
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "Status": st.column_config.SelectboxColumn(
-            "Status",
-            help="Data status",
-            options=["Open", "In Progress", "Closed"],
-            required=True,
-        ),
-        "Priority": st.column_config.SelectboxColumn(
-            "Priority",
-            help="Priority",
-            options=["High", "Medium", "Low"],
-            required=True,
-        ),
-    },
-    # Disable editing the ID and Date Submitted columns.
-    disabled=["ID", "Date Submitted"],
-)
+# st.write(f"Number of data: `{len(st.session_state.df)}`")
 
 # スライダーを使って年齢の範囲を選択
 date_min, date_max = st.slider(
     'Date filter',
-    min_value=edited_df['Date Submitted'].min(),
-    max_value=edited_df['Date Submitted'].max(),
-    value=(edited_df['Date Submitted'].min(), edited_df['Date Submitted'].max())
+    min_value=st.session_state.df['Date Submitted'].min(),
+    max_value=st.session_state.df['Date Submitted'].max(),
+    value=(st.session_state.df['Date Submitted'].min(), st.session_state.df['Date Submitted'].max())
 )
 
 # 選択された範囲でデータフレームをフィルター
-filtered_df = edited_df[(edited_df['Date Submitted'] >= date_min) & (edited_df['Date Submitted'] <= date_max)]
+filtered_df = st.session_state.df[(st.session_state.df['Date Submitted'] >= date_min) & (st.session_state.df['Date Submitted'] <= date_max)]
+st.session_state.filtered_df = filtered_df
+st.write(f"Number of data: `{len(st.session_state.filtered_df)}`")
+
+st.write(filtered_df)
 
 # データフレームをCSV形式に変換
-csv = edited_df.to_csv(index=False).encode('utf-8')
+csv = filtered_df.to_csv(index=False).encode('utf-8')
 
 # ダウンロードボタンの作成
 st.download_button(
@@ -117,7 +97,8 @@ st.header("Statistics")
 
 # Show metrics side by side using `st.columns` and `st.metric`.
 col1, col2, col3 = st.columns(3)
-num_open_tickets = len(st.session_state.df[st.session_state.df.Status == "Open"])
+# num_open_tickets = len(st.session_state.filtered_df[st.session_state.filtered_df.Status == "Open"])
+num_open_tickets = len(filtered_df[filtered_df.Status == "Open"])
 col1.metric(label="Number of open data", value=num_open_tickets, delta=10)
 col2.metric(label="First response time (hours)", value=5.2, delta=-1.5)
 col3.metric(label="Average resolution time (hours)", value=16, delta=2)
@@ -126,7 +107,7 @@ col3.metric(label="Average resolution time (hours)", value=16, delta=2)
 st.write("")
 st.write("##### Data status per month")
 status_plot = (
-    alt.Chart(edited_df)
+    alt.Chart(filtered_df)
     .mark_bar()
     .encode(
         x="month(Date Submitted):O",
@@ -142,7 +123,7 @@ st.altair_chart(status_plot, use_container_width=True, theme="streamlit")
 
 st.write("##### Current Data priorities")
 priority_plot = (
-    alt.Chart(edited_df)
+    alt.Chart(filtered_df)
     .mark_arc()
     .encode(theta="count():Q", color="Priority:N")
     .properties(height=300)
