@@ -5,52 +5,60 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
+from faker import Faker
 
 # Show app title and description.
 st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫", layout="wide")
 st.title("🎫 Table Demo")
 
+# Fakerライブラリを使って架空のデータを生成
+fake = Faker()
+
+# データの数
+num_records = 10
+
+# データフレームのカラム
+columns = ['Name', 'Ticket Number', 'Date', 'Class', 'Departure', 'Destination', 'Flight Number', 'Seat Number']
+
+# データを生成
+data = {
+    'Name': [fake.name() for _ in range(num_records)],
+    'Ticket Number': [fake.unique.random_number(digits=10) for _ in range(num_records)],
+    'Date': [fake.date_this_year() for _ in range(num_records)],
+    'Class': [np.random.choice(['Economy', 'Business', 'First']) for _ in range(num_records)],
+    'Departure': [fake.city() for _ in range(num_records)],
+    'Destination': [fake.city() for _ in range(num_records)],
+    'Flight Number': [fake.unique.random_number(digits=5) for _ in range(num_records)],
+    'Seat Number': [f"{np.random.randint(1, 30)}{np.random.choice(['A', 'B', 'C', 'D', 'E', 'F'])}" for _ in range(num_records)]
+}
+
+# データフレームを作成
+df = pd.DataFrame(data, columns=columns)
+
 # Create a random Pandas dataframe with existing tickets.
 if "df" not in st.session_state:
+    # Fakerライブラリを使って架空のデータを生成
+    fake = Faker()
 
-    # Set seed for reproducibility.
-    np.random.seed(42)
+    # データの数
+    num_records = 1000
 
-    # Make up some fake issue descriptions.
-    issue_descriptions = [
-        "Network connectivity issues in the office",
-        "Software application crashing on startup",
-        "Printer not responding to print commands",
-        "Email server downtime",
-        "Data backup failure",
-        "Login authentication problems",
-        "Website performance degradation",
-        "Security vulnerability identified",
-        "Hardware malfunction in the server room",
-        "Employee unable to access shared files",
-        "Database connection failure",
-        "Mobile application not syncing data",
-        "VoIP phone system issues",
-        "VPN connection problems for remote employees",
-        "System updates causing compatibility issues",
-        "File server running out of storage space",
-        "Intrusion detection system alerts",
-        "Inventory management system errors",
-        "Customer data not loading in CRM",
-        "Collaboration tool not sending notifications",
-    ]
+    # データフレームのカラム
+    columns = ['Name', 'Ticket Number', 'Date', 'Class', 'Departure', 'Destination', 'Flight Number', 'Seat Number']
 
-    # Generate the dataframe with 100 rows/tickets.
+    # データを生成
     data = {
-        "ID": [f"TICKET-{i}" for i in range(1100, 1000, -1)],
-        "Issue": np.random.choice(issue_descriptions, size=100),
-        "Status": np.random.choice(["Open", "In Progress", "Closed"], size=100),
-        "Priority": np.random.choice(["High", "Medium", "Low"], size=100),
-        "Date Submitted": [
-            datetime.date(2023, 6, 1) + datetime.timedelta(days=random.randint(0, 182))
-            for _ in range(100)
-        ],
+        'Name': [fake.name() for _ in range(num_records)],
+        'Ticket Number': [fake.unique.random_number(digits=10) for _ in range(num_records)],
+        'Date': [fake.date_this_year() for _ in range(num_records)],
+        'Class': [np.random.choice(['Economy', 'Business', 'First']) for _ in range(num_records)],
+        'Departure': [fake.city() for _ in range(num_records)],
+        'Destination': [fake.city() for _ in range(num_records)],
+        'Flight Number': [f"{'JAL'}{fake.unique.random_number(digits=3)}" for _ in range(num_records)],
+        'Seat Number': [f"{np.random.randint(1, 30)}{np.random.choice(['A', 'B', 'C', 'D', 'E', 'F'])}" for _ in range(num_records)]
     }
+
+    # データフレームを作成
     df = pd.DataFrame(data)
 
     # Save the dataframe in session state (a dictionary-like object that persists across
@@ -61,18 +69,18 @@ if "df" not in st.session_state:
 st.header("Table")
 date_min, date_max = st.slider(
     "Date filter",
-    min_value=st.session_state.df["Date Submitted"].min(),
-    max_value=st.session_state.df["Date Submitted"].max(),
+    min_value=st.session_state.df["Date"].min(),
+    max_value=st.session_state.df["Date"].max(),
     value=(
-        st.session_state.df["Date Submitted"].min(),
-        st.session_state.df["Date Submitted"].max(),
+        st.session_state.df["Date"].min(),
+        st.session_state.df["Date"].max(),
     ),
 )
 
 # 選択された範囲でデータフレームをフィルター
 filtered_df = st.session_state.df[
-    (st.session_state.df["Date Submitted"] >= date_min)
-    & (st.session_state.df["Date Submitted"] <= date_max)
+    (st.session_state.df["Date"] >= date_min)
+    & (st.session_state.df["Date"] <= date_max)
 ]
 st.session_state.filtered_df = filtered_df
 
@@ -91,10 +99,10 @@ status_plot = (
     alt.Chart(filtered_df)
     .mark_bar()
     .encode(
-        x="month(Date Submitted):O",
+        x="month(Date):O",
         y="count():Q",
-        xOffset="Status:N",
-        color="Status:N",
+        xOffset="Class:N",
+        color="Class:N",
     )
     .configure_legend(
         orient="bottom", titleFontSize=14, labelFontSize=14, titlePadding=5
@@ -106,7 +114,7 @@ right_column.altair_chart(status_plot, use_container_width=True, theme="streamli
 priority_plot = (
     alt.Chart(filtered_df)
     .mark_arc()
-    .encode(theta="count():Q", color="Priority:N")
+    .encode(theta="count():Q", color="Class:N")
     .properties(height=300)
     .configure_legend(
         orient="bottom", titleFontSize=14, labelFontSize=14, titlePadding=5
