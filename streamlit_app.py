@@ -43,14 +43,20 @@ if "df" not in st.session_state:
 # Show section to view and edit existing tickets in a table.
 st.header("Table")
 date_min, date_max = st.slider(
-    'Date filter',
-    min_value=st.session_state.df['Date Submitted'].min(),
-    max_value=st.session_state.df['Date Submitted'].max(),
-    value=(st.session_state.df['Date Submitted'].min(), st.session_state.df['Date Submitted'].max())
+    "Date filter",
+    min_value=st.session_state.df["Date Submitted"].min(),
+    max_value=st.session_state.df["Date Submitted"].max(),
+    value=(
+        st.session_state.df["Date Submitted"].min(),
+        st.session_state.df["Date Submitted"].max(),
+    ),
 )
 
 # 選択された範囲でデータフレームをフィルター
-filtered_df = st.session_state.df[(st.session_state.df['Date Submitted'] >= date_min) & (st.session_state.df['Date Submitted'] <= date_max)]
+filtered_df = st.session_state.df[
+    (st.session_state.df["Date Submitted"] >= date_min)
+    & (st.session_state.df["Date Submitted"] <= date_max)
+]
 st.session_state.filtered_df = filtered_df
 
 # テーブルを左側に表示
@@ -93,12 +99,9 @@ right_column.altair_chart(priority_plot, use_container_width=True, theme="stream
 
 
 # データフレームをCSV形式に変換
-csv = filtered_df.to_csv(index=False).encode('utf-8')
+csv = filtered_df.to_csv(index=False).encode("utf-8")
 
 # ダウンロードボタンを右側に表示
 st.download_button(
-    label="テーブルをダウンロード",
-    data=csv,
-    file_name='table.csv',
-    mime='text/csv'
+    label="テーブルをダウンロード", data=csv, file_name="table.csv", mime="text/csv"
 )
