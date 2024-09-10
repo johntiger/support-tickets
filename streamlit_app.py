@@ -58,7 +58,7 @@ if "df" not in st.session_state:
     st.session_state.df = df
 
 # Show section to view and edit existing tickets in a table.
-st.header("Table")
+st.header("Fake data Table")
 date_min, date_max = st.slider(
     "Date filter",
     min_value=st.session_state.df["Date"].min(),
