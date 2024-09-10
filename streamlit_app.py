@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 
 # Show app title and description.
-st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫")
+st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫", layout="wide")
 st.title("🎫 Table Demo")
 
 # Create a random Pandas dataframe with existing tickets.
