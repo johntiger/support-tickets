@@ -11,30 +11,6 @@ from faker import Faker
 st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫", layout="wide")
 st.title("🎫 Table Demo")
 
-# Fakerライブラリを使って架空のデータを生成
-fake = Faker()
-
-# データの数
-num_records = 10
-
-# データフレームのカラム
-columns = ['Name', 'Ticket Number', 'Date', 'Class', 'Departure', 'Destination', 'Flight Number', 'Seat Number']
-
-# データを生成
-data = {
-    'Name': [fake.name() for _ in range(num_records)],
-    'Ticket Number': [fake.unique.random_number(digits=10) for _ in range(num_records)],
-    'Date': [fake.date_this_year() for _ in range(num_records)],
-    'Class': [np.random.choice(['Economy', 'Business', 'First']) for _ in range(num_records)],
-    'Departure': [fake.city() for _ in range(num_records)],
-    'Destination': [fake.city() for _ in range(num_records)],
-    'Flight Number': [fake.unique.random_number(digits=5) for _ in range(num_records)],
-    'Seat Number': [f"{np.random.randint(1, 30)}{np.random.choice(['A', 'B', 'C', 'D', 'E', 'F'])}" for _ in range(num_records)]
-}
-
-# データフレームを作成
-df = pd.DataFrame(data, columns=columns)
-
 # Create a random Pandas dataframe with existing tickets.
 if "df" not in st.session_state:
     # Fakerライブラリを使って架空のデータを生成
