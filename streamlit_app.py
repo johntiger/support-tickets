@@ -20,7 +20,24 @@ if "df" not in st.session_state:
     issue_descriptions = [
         "Network connectivity issues in the office",
         "Software application crashing on startup",
-        # ... (remaining issue descriptions)
+        "Printer not responding to print commands",
+        "Email server downtime",
+        "Data backup failure",
+        "Login authentication problems",
+        "Website performance degradation",
+        "Security vulnerability identified",
+        "Hardware malfunction in the server room",
+        "Employee unable to access shared files",
+        "Database connection failure",
+        "Mobile application not syncing data",
+        "VoIP phone system issues",
+        "VPN connection problems for remote employees",
+        "System updates causing compatibility issues",
+        "File server running out of storage space",
+        "Intrusion detection system alerts",
+        "Inventory management system errors",
+        "Customer data not loading in CRM",
+        "Collaboration tool not sending notifications",
     ]
 
     # Generate the dataframe with 100 rows/tickets.
@@ -96,7 +113,6 @@ priority_plot = (
     )
 )
 right_column.altair_chart(priority_plot, use_container_width=True, theme="streamlit")
-
 
 # データフレームをCSV形式に変換
 csv = filtered_df.to_csv(index=False).encode("utf-8")
