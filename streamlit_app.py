@@ -30,7 +30,7 @@ if "df" not in st.session_state:
         'Class': [np.random.choice(['Economy', 'Business', 'First']) for _ in range(num_records)],
         'Departure': [fake.city() for _ in range(num_records)],
         'Destination': [fake.city() for _ in range(num_records)],
-        'Flight Number': [f"{'JAL'}{fake.unique.random_number(digits=3)}" for _ in range(num_records)],
+        'Flight Number': ['JAL'+str(fake.random_number(digits=3)) for _ in range(num_records)],
         'Seat Number': [f"{np.random.randint(1, 30)}{np.random.choice(['A', 'B', 'C', 'D', 'E', 'F'])}" for _ in range(num_records)]
     }
 
