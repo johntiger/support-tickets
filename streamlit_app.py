@@ -6,13 +6,11 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from faker import Faker
+from faker.providers import BaseProvider
 
 # Show app title and description.
 st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫", layout="wide")
 st.title("🎫 Table Demo")
-import random
-from faker import Faker
-from faker.providers import BaseProvider
 
 # カスタムプロバイダーを作成
 class AirportProvider(BaseProvider):
