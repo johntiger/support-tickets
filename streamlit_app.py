@@ -10,11 +10,27 @@ from faker import Faker
 # Show app title and description.
 st.set_page_config(page_title="Streamlit Table Demo", page_icon="🎫", layout="wide")
 st.title("🎫 Table Demo")
+import random
+from faker import Faker
+from faker.providers import BaseProvider
+
+# カスタムプロバイダーを作成
+class AirportProvider(BaseProvider):
+    def airport_name(self):
+        airports = [
+             "東京羽田空港", "成田国際空港", "新千歳空港", "旭川空港", "函館空港",
+            "青森空港", "秋田空港", "仙台空港", "新潟空港", "富山空港",
+            "小松空港", "中部国際空港", "大阪伊丹空港", "関西国際空港", "神戸空港",
+            "岡山空港", "広島空港", "山口宇部空港", "高松空港", "松山空港",
+            "福岡空港", "北九州空港", "長崎空港", "熊本空港", "大分空港",
+            "宮崎空港", "鹿児島空港", "那覇空港"
+        ]
+        return random.choice(airports)
 
 # Create a random Pandas dataframe with existing tickets.
 if "df" not in st.session_state:
     # Fakerライブラリを使って架空のデータを生成
-    fake = Faker()
+    fake = Faker('ja_JP')
 
     # データの数
     num_records = 1000
@@ -22,14 +38,17 @@ if "df" not in st.session_state:
     # データフレームのカラム
     columns = ['Name', 'Ticket Number', 'Date', 'Class', 'Departure', 'Destination', 'Flight Number', 'Seat Number']
 
+    # Fakerインスタンスを作成し、カスタムプロバイダーを追加
+    fake.add_provider(AirportProvider)
+
     # データを生成
     data = {
         'Name': [fake.name() for _ in range(num_records)],
         'Ticket Number': [fake.unique.random_number(digits=10) for _ in range(num_records)],
         'Date': [fake.date_this_year() for _ in range(num_records)],
         'Class': [np.random.choice(['Economy', 'Business', 'First']) for _ in range(num_records)],
-        'Departure': [fake.city() for _ in range(num_records)],
-        'Destination': [fake.city() for _ in range(num_records)],
+        'Departure': [fake.airport_name() for _ in range(num_records)],
+        'Destination': [fake.airport_name() for _ in range(num_records)],
         'Flight Number': ['JAL'+str(fake.random_number(digits=3)) for _ in range(num_records)],
         'Seat Number': [f"{np.random.randint(1, 30)}{np.random.choice(['A', 'B', 'C', 'D', 'E', 'F'])}" for _ in range(num_records)]
     }
