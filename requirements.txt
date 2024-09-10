@@ -1,2 +1,2 @@
 streamlit
-pip freeze | grep faker
+faker
